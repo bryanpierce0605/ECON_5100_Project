@@ -1,0 +1,83 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#load data as csv file
+
+data <- read.csv("/Users/bryan/Downloads/econ5100_final_data.csv")
+data
+```
+```{r}
+#descriptive stats table
+
+stat.desc(data)
+```
+
+```{r}
+#more descriptive stats
+
+summary(data)
+```
+
+```{r}
+install.packages("psych")
+install.packages("psychTools")
+install.packages("testthat")
+```
+```{r}
+#more descriptive stats; skew, kurtosis
+#load 'testthat' before 'psych' or describe won't work
+
+describe(data)
+```
+```{r}
+#create subset that excludes 'Metro' so cor table works
+
+myvars <- names(data) %in% c("Metro")
+newdata <- data[!myvars]
+```
+```{r}
+#correlation table
+
+cor(newdata, use = "complete.obs")
+```
+```{r}
+#another correlation table
+
+mcor <- round(cor(newdata, use = "complete.obs"), 2)
+mcor
+
+#hide upper triange
+
+upper <- mcor
+upper[upper.tri(mcor)] <- ""
+upper <- as.data.frame(upper)
+upper
+
+install.packages("xtable")
+library("xtable")
+print(xtable(upper), type = "html")
+```
+
+```{r}
+#test regression
+
+test_regression <- lm(avg ~ pop + Median_Inc + Housing_units_percap + Median_home_value + Median_rent, data = data)
+
+test_regression
+```
+
+```{r}
+#regression output
+
+summary(test_regression)
+```
+
+```{r}
+#anova
+
+anova(test_regression)
+```
+
